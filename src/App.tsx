@@ -1,220 +1,301 @@
-import { lazy, Suspense } from 'react'
-import { motion } from 'motion/react'
+import { useEffect, useRef, useState } from 'react'
+import { projects } from './data/projects'
+import { experience, education } from './data/experience'
+import { ArrowDown, ArrowUpRight, MailIcon } from './components/Icons'
+import SystemStage from './components/SystemStage'
 
-const SkillGalaxy = lazy(() => import('./SkillGalaxy'))
-
-const projects = [
+const STEPS = [
   {
-    kicker: '01 · LIVE DEMO',
-    title: 'Job-Match AI',
-    blurb: 'Resume ↔ job skill scorer with FastAPI and optional ChatGPT blending.',
-    metric: 'Live on Render',
-    href: 'https://job-match-ai-rawb.onrender.com',
+    kicker: '01 / Pipelines',
+    title: 'Pipelines people can trust.',
+    body: 'Medallion architectures, incremental loads, and SQL that survives audit — ADF, Databricks, and Snowflake under tight SLAs.',
   },
   {
-    kicker: '02 · AI ENGINEERING',
-    title: 'AI Engineer Projects',
-    blurb: 'Symptom checker, finance sentiment analyzer, multi-agent research digest.',
-    metric: 'Deployed LLM apps',
-    href: 'https://github.com/Bchamp21/ai-engineer-projects',
+    kicker: '02 / Platforms',
+    title: 'Platforms built to hold up.',
+    body: '.NET and Python APIs, CI/CD, observability, and MDM for hundreds of fund datasets across banking, insurance, and asset management.',
   },
   {
-    kicker: '03 · DATA PLATFORM',
-    title: 'Azure Databricks Lakehouse',
-    blurb: 'Medallion MDM pipelines with ADF, ADLS Gen2, and Delta Lake.',
-    metric: '500+ fund datasets',
-    href: 'https://github.com/Bchamp21/data-engineering-azure-databricks-project',
+    kicker: '03 / Applied AI',
+    title: 'AI becomes part of the product.',
+    body: 'LangChain, LangGraph, and RAG agents for triage, integrity checks, and match scoring — with a human in the loop for the final call.',
   },
   {
-    kicker: '04 · CLOUD DE',
-    title: 'AWS & GCP Pipelines',
-    blurb: 'End-to-end data engineering projects across major clouds.',
-    metric: 'Multi-cloud DE',
-    href: 'https://github.com/Bchamp21/data-engineering-aws',
+    kicker: '04 / Analytics',
+    title: 'Then the data tells the story.',
+    body: 'Power BI and dimensional models so operators see impact, not just raw tables — from lakehouse tables to board-ready views.',
   },
-  {
-    kicker: '05 · PRODUCT',
-    title: 'AuraAI',
-    blurb: 'AI chatbot SaaS stack: FastAPI + React + Supabase + Stripe.',
-    metric: 'Full-stack AI',
-    href: 'https://github.com/Bchamp21/AuraAI',
-  },
-  {
-    kicker: '06 · PRACTICE',
-    title: 'Daily DE + AI',
-    blurb: '180 days of real data engineering and AI mini-projects.',
-    metric: 'Builder rhythm',
-    href: 'https://github.com/Bchamp21/daily-de-ai-projects',
-  },
-]
-
-const jobs = [
-  {
-    when: '2023 — Now',
-    title: 'Sr. Data / Application Engineer',
-    org: 'Janus Henderson Investors',
-    detail: 'Lakehouse + Snowflake MDM for fund data; production AI agents for BAU triage and integrity checks.',
-  },
-  {
-    when: 'Prior',
-    title: 'Data & Analytics engineering',
-    org: 'Hubbell · Zurich · TransUnion · Citi · Amex · Cognizant',
-    detail: 'Fraud/credit risk models, ETL latency cuts, and enterprise SQL/Spark platforms across financial services.',
-  },
-]
+] as const
 
 export default function App() {
+  const [activeProject, setActiveProject] = useState(0)
+  const [storyStep, setStoryStep] = useState(0)
+  const [navScrolled, setNavScrolled] = useState(false)
+  const panelRefs = useRef<(HTMLElement | null)[]>([])
+
+  useEffect(() => {
+    const onScroll = () => setNavScrolled(window.scrollY > 24)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  useEffect(() => {
+    const els = panelRefs.current.filter(Boolean) as HTMLElement[]
+    if (!els.length) return
+    const io = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)
+        if (!visible[0]) return
+        const idx = els.indexOf(visible[0].target as HTMLElement)
+        if (idx >= 0) setStoryStep(idx)
+      },
+      { rootMargin: '-35% 0px -35% 0px', threshold: [0.15, 0.4, 0.7] },
+    )
+    els.forEach((el) => io.observe(el))
+    return () => io.disconnect()
+  }, [])
+
+  const current = projects[activeProject] ?? projects[0]
+
   return (
-    <>
-      <header className="nav">
-        <div className="container nav inner">
-          <a className="brand" href="#top">Bhuvan Sarakam</a>
-          <a href="#work">Work</a>
-          <a href="#about">About</a>
-          <a href="#experience">Experience</a>
-          <a href="#partners">Partners</a>
-          <a href="#contact">Contact</a>
+    <div className="signal-portfolio">
+      <header className={`signal-nav ${navScrolled ? 'is-scrolled' : 'is-home'}`}>
+        <div className="signal-nav-inner">
+          <a className="signal-nav-mark" href="#top">
+            <span>BC</span>
+            <strong>Bhuvan Chandra</strong>
+          </a>
+          <nav aria-label="Primary navigation">
+            <a href="#work">Work</a>
+            <a href="#about">About</a>
+            <a href="#experience">Experience</a>
+            <a className="signal-nav-contact" href="#contact">
+              Contact <ArrowUpRight />
+            </a>
+          </nav>
         </div>
       </header>
 
-      <main id="top">
-        <section className="container hero">
-          <div>
-            <p className="muted" style={{ fontWeight: 600, letterSpacing: '0.04em', textTransform: 'uppercase', fontSize: '0.78rem' }}>
-              Data · Power BI · Software · AI
-            </p>
-            <motion.h1
-              className="serif"
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
+      <main className="signal-portfolio-main">
+        <section className={`signal-story is-step-${storyStep}`} aria-label="How a data platform works">
+          <SystemStage step={Math.min(storyStep, 4)} />
+          <div className="signal-panels">
+            <section
+              id="top"
+              className="signal-panel signal-hero"
+              ref={(el) => {
+                panelRefs.current[0] = el
+              }}
             >
-              I build data platforms and AI systems for the real world.
-            </motion.h1>
-            <p className="lead muted">
-              Senior Data Engineer with 10+ years across banking, insurance, and asset management —
-              Databricks lakehouses, Snowflake warehouses, and production LangGraph agents that cut detection time from hours to minutes.
-            </p>
-            <div className="btns">
-              <a className="btn primary" href="/resume/Bhuvan-Sarakam-AI-Data-Engineer.pdf" target="_blank" rel="noreferrer">AI / Data resume</a>
-              <a className="btn" href="/resume/Bhuvan-Sarakam-Databricks-Cloud.pdf" target="_blank" rel="noreferrer">Databricks resume</a>
-              <a className="btn ghost" href="https://www.linkedin.com/in/bhuvansdata" target="_blank" rel="noreferrer">LinkedIn</a>
-              <a className="btn ghost" href="https://github.com/Bchamp21" target="_blank" rel="noreferrer">GitHub</a>
-            </div>
-          </div>
-          <div className="hero-photo-wrap">
-            <img src="/bhuvan.png" alt="Bhuvan Sarakam" />
-            <div className="canvas-chip">
-              <Suspense fallback={null}>
-                <SkillGalaxy />
-              </Suspense>
-            </div>
+              <div className="signal-panel-copy">
+                <p className="signal-kicker">
+                  Bhuvan Chandra
+                  <span>Senior Data Engineer · AI/ML &amp; Data Platform</span>
+                </p>
+                <h1>I build data platforms and AI systems for the real world.</h1>
+                <p className="signal-intro">
+                  10+ years in data engineering, analytics, and ML — Databricks lakehouses,
+                  Snowflake warehouses, and production agents that move detection from hours to minutes.
+                </p>
+                <div className="signal-actions">
+                  <a className="signal-button" href="#work">
+                    View selected work <ArrowDown />
+                  </a>
+                  <a className="signal-text-link" href="mailto:bhuvansarakam@gmail.com">
+                    Start a conversation <ArrowUpRight />
+                  </a>
+                </div>
+              </div>
+            </section>
+
+            {STEPS.map((step, i) => (
+              <section
+                key={step.kicker}
+                className="signal-panel"
+                ref={(el) => {
+                  panelRefs.current[i + 1] = el
+                }}
+              >
+                <div className="signal-panel-copy signal-step-copy">
+                  <p className="signal-kicker">{step.kicker}</p>
+                  <h2>{step.title}</h2>
+                  <p>{step.body}</p>
+                </div>
+              </section>
+            ))}
           </div>
         </section>
 
-        <section className="section" id="about">
-          <div className="container">
-            <h2 className="serif">From lakehouse to agent — software that holds up.</h2>
-            <p className="muted" style={{ maxWidth: '40rem' }}>
-              Same rhythm as a product engineer’s portfolio: clear narrative, real metrics, then the work.
-            </p>
-            <div className="story-grid">
-              <article className="story">
-                <div className="num">01</div>
-                <h3 className="serif">Pipelines people can trust</h3>
-                <p className="muted">Medallion architectures, incremental loads, and SQL that survives audit — ADF, Databricks, Snowflake.</p>
-              </article>
-              <article className="story">
-                <div className="num">02</div>
-                <h3 className="serif">Platforms built to hold up</h3>
-                <p className="muted">.NET/Python APIs, CI/CD, observability, and MDM for hundreds of fund datasets under tight SLAs.</p>
-              </article>
-              <article className="story">
-                <div className="num">03</div>
-                <h3 className="serif">AI as part of the product</h3>
-                <p className="muted">LangChain / LangGraph / RAG agents for triage, integrity checks, and match scoring — with a human in the loop.</p>
-              </article>
-              <article className="story">
-                <div className="num">04</div>
-                <h3 className="serif">BI that tells the story</h3>
-                <p className="muted">Power BI and dimensional models so operators see impact, not just raw tables.</p>
-              </article>
+        <section className="signal-work" id="work" aria-labelledby="work-title">
+          <div className="signal-page-frame signal-section-heading">
+            <div>
+              <p className="signal-kicker">Selected work</p>
+              <h2 id="work-title">Built for the real world.</h2>
             </div>
+            <p>
+              Projects measured by what ships: live demos, lakehouse pipelines, and AI agents you can open
+              and explore. New builds land here as they go live.
+            </p>
           </div>
-        </section>
 
-        <section className="section" id="work">
-          <div className="container">
-            <h2 className="serif">Selected work</h2>
-            <p className="muted">Projects you can open. New AI builds get added here as they ship.</p>
-            <div className="work-grid">
-              {projects.map((p) => (
-                <a key={p.title} className="work" href={p.href} target="_blank" rel="noreferrer">
-                  <div className="kicker">{p.kicker}</div>
-                  <h3>{p.title}</h3>
-                  <p className="muted" style={{ fontSize: '0.92rem', margin: 0 }}>{p.blurb}</p>
-                  <div className="metric">{p.metric} →</div>
+          <div className="signal-page-frame signal-work-layout">
+            <div className="signal-project-list">
+              {projects.map((p, i) => (
+                <a
+                  key={p.id}
+                  className={`signal-project-row ${i === activeProject ? 'is-active' : ''}`}
+                  href={p.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  onMouseEnter={() => setActiveProject(i)}
+                  onFocus={() => setActiveProject(i)}
+                >
+                  <span className="signal-project-number">{p.number}</span>
+                  <span className="signal-project-copy">
+                    <small>{p.category}</small>
+                    <strong>{p.title}</strong>
+                    <span>{p.metric}</span>
+                  </span>
+                  <ArrowUpRight />
+                  {p.image ? (
+                    <span className="signal-project-mobile-image">
+                      <img src={p.image} alt="" loading="lazy" />
+                    </span>
+                  ) : null}
                 </a>
               ))}
             </div>
+
+            <div className="signal-work-visual">
+              <div className="signal-work-image">
+                {current.image ? (
+                  <>
+                    <img src={current.image} alt="" className="work-shot" />
+                    <div className="signal-work-caption">
+                      <span>{current.role ?? current.category}</span>
+                      <strong>{current.metric}</strong>
+                    </div>
+                  </>
+                ) : (
+                  <div className="signal-work-fallback">
+                    <p className="signal-kicker">{current.category}</p>
+                    <strong>{current.title}</strong>
+                    <span>{current.metric}</span>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </section>
 
-        <section className="section" id="experience">
-          <div className="container">
-            <h2 className="serif">Experience</h2>
-            <div className="skills">
-              {['Databricks', 'PySpark', 'Snowflake', 'ADF', 'dbt', 'Power BI', 'SQL', 'LangGraph', 'RAG', 'FastAPI', '.NET', 'Azure', 'AWS'].map((s) => (
-                <span className="chip" key={s}>{s}</span>
-              ))}
+        <section className="signal-about" id="about" aria-labelledby="about-title">
+          <div className="signal-page-frame signal-about-grid">
+            <div className="signal-about-image">
+              <img src="/bhuvan.png" alt="Bhuvan Chandra" className="object-cover" />
             </div>
-            <div className="timeline">
-              {jobs.map((j) => (
-                <div className="job" key={j.title}>
-                  <div className="when">{j.when}</div>
-                  <div>
-                    <strong>{j.title}</strong>
-                    <div className="muted">{j.org}</div>
-                    <p className="muted" style={{ margin: '0.4rem 0 0' }}>{j.detail}</p>
+            <div className="signal-about-copy">
+              <p className="signal-kicker">About Bhuvan</p>
+              <h2 id="about-title">From lakehouse tables to production agents.</h2>
+              <p className="signal-about-lead">
+                Based in Denver, CO. Senior Data Engineer at Janus Henderson since 2023, with a decade
+                across Hubbell, Zurich, TransUnion CIBIL, Citi, American Express, and Cognizant.
+                Education: IIT Madras (B.Tech / M.Tech) and an M.S. in Computer Science from Northwest
+                Missouri State.
+              </p>
+              <dl className="signal-capabilities">
+                <div>
+                  <dt>Data platform</dt>
+                  <dd>Databricks, PySpark, Snowflake, Azure Data Factory, dbt, Delta Lake</dd>
+                </div>
+                <div>
+                  <dt>Applied AI</dt>
+                  <dd>LangChain, LangGraph, RAG, 17 production agents, FastAPI scoring services</dd>
+                </div>
+                <div>
+                  <dt>Software &amp; BI</dt>
+                  <dd>.NET / Python APIs, Power BI, dimensional models, CI/CD observability</dd>
+                </div>
+              </dl>
+            </div>
+          </div>
+
+          <div className="signal-page-frame signal-experience" id="experience">
+            <header className="signal-experience-heading">
+              <p className="signal-kicker">Selected experience</p>
+              <h3>Engineering across platforms, products, and teams.</h3>
+              <div className="signal-resume-links">
+                <a
+                  className="signal-resume-link"
+                  href="/resume/Bhuvan-Sarakam-AI-Data-Engineer.pdf"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  AI/Data Platform resume <ArrowUpRight />
+                </a>
+                <a
+                  className="signal-resume-link"
+                  href="/resume/Bhuvan-Sarakam-Databricks-Cloud.pdf"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Databricks &amp; Cloud resume <ArrowUpRight />
+                </a>
+              </div>
+            </header>
+            <div>
+              {experience.map((job) => (
+                <div className="signal-experience-row" key={`${job.org}-${job.title}`}>
+                  <span>{job.when}</span>
+                  <div className="signal-experience-role">
+                    <strong>{job.title}</strong>
+                    <span>{job.org}</span>
                   </div>
+                  <p>{job.detail}</p>
+                </div>
+              ))}
+              {education.map((ed) => (
+                <div className="signal-experience-row" key={ed.org}>
+                  <span>{ed.when}</span>
+                  <div className="signal-experience-role">
+                    <strong>{ed.title}</strong>
+                    <span>{ed.org}</span>
+                  </div>
+                  <p>{ed.detail}</p>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        <section className="section" id="partners">
-          <div className="container">
-            <h2 className="serif">For investors &amp; cofounders</h2>
-            <div className="story-grid">
-              <article className="story">
-                <h3 className="serif">What I build</h3>
-                <p className="muted">AI agents, data platforms, and demos that ship. Looking for partners who care about craft and real users.</p>
-              </article>
-              <article className="story">
-                <h3 className="serif">How to reach me</h3>
-                <p className="muted">Send a short intro and what you’re building. This site is a portfolio — not a commercial pitch.</p>
-              </article>
-            </div>
-          </div>
-        </section>
-
-        <section className="section" id="contact">
-          <div className="container">
-            <div className="cta">
-              <h2 className="serif" style={{ margin: 0, color: '#fff' }}>Let’s build something people remember.</h2>
-              <p className="muted" style={{ margin: 0 }}>bhuvansarakam@gmail.com · Denver, CO</p>
-              <div className="btns">
-                <a className="btn" href="mailto:bhuvansarakam@gmail.com">Email me</a>
-                <a className="btn ghost" href="https://www.linkedin.com/in/bhuvansdata" target="_blank" rel="noreferrer">LinkedIn</a>
-                <a className="btn ghost" href="/resume/Bhuvan-Sarakam-AI-Data-Engineer.pdf" target="_blank" rel="noreferrer">AI resume</a>
-                <a className="btn ghost" href="/resume/Bhuvan-Sarakam-Databricks-Cloud.pdf" target="_blank" rel="noreferrer">Databricks resume</a>
-              </div>
-            </div>
-            <p className="footer">© {new Date().getFullYear()} Bhuvan Sarakam · Portfolio</p>
+        <section className="signal-contact" id="contact" aria-labelledby="contact-title">
+          <div className="signal-page-frame">
+            <p className="signal-kicker">The next sequence</p>
+            <h2 id="contact-title">Let&apos;s build something people remember.</h2>
+            <p className="signal-contact-note">
+              Open to connect with collaborators and investors on portfolio and hobby projects —
+              this site is a portfolio, not a commercial pitch.
+            </p>
+            <a className="signal-contact-link" href="mailto:bhuvansarakam@gmail.com">
+              <MailIcon />
+              bhuvansarakam@gmail.com
+              <ArrowUpRight />
+            </a>
+            <footer className="signal-footer">
+              <span>Bhuvan Chandra</span>
+              <span>Denver, CO</span>
+              <a href="https://github.com/Bchamp21" target="_blank" rel="noreferrer">
+                GitHub <ArrowUpRight />
+              </a>
+              <a href="https://linkedin.com/in/bhuvansdata" target="_blank" rel="noreferrer">
+                LinkedIn <ArrowUpRight />
+              </a>
+            </footer>
           </div>
         </section>
       </main>
-    </>
+    </div>
   )
 }
