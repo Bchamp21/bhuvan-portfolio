@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { projects } from './data/projects'
 import { experience, education } from './data/experience'
 import { ArrowDown, ArrowUpRight, MailIcon } from './components/Icons'
+import ProjectRoadmap from './components/ProjectRoadmap'
 import SystemStage from './components/SystemStage'
 
 const STEPS = [
@@ -70,6 +71,7 @@ export default function App() {
           </a>
           <nav aria-label="Primary navigation">
             <a href="#work">Work</a>
+            <a href="#roadmap">Build journal</a>
             <a href="#about">About</a>
             <a href="#experience">Experience</a>
             <a className="signal-nav-contact" href="#contact">
@@ -191,10 +193,12 @@ export default function App() {
           </div>
         </section>
 
+        <ProjectRoadmap />
+
         <section className="signal-about" id="about" aria-labelledby="about-title">
           <div className="signal-page-frame signal-about-grid">
             <div className="signal-about-image">
-              <img src="/bhuvan.png" alt="Bhuvan Chandra" className="object-cover" />
+              <img src={`${import.meta.env.BASE_URL}bhuvan.png`} alt="Bhuvan Chandra" className="object-cover" />
             </div>
             <div className="signal-about-copy">
               <p className="signal-kicker">About Bhuvan</p>
@@ -229,7 +233,7 @@ export default function App() {
               <div className="signal-resume-links">
                 <a
                   className="signal-resume-link"
-                  href="/resume/Bhuvan-Sarakam-AI-Data-Engineer.pdf"
+                  href={`${import.meta.env.BASE_URL}resume/Bhuvan-Sarakam-AI-Data-Engineer.pdf`}
                   target="_blank"
                   rel="noreferrer"
                 >
@@ -237,7 +241,7 @@ export default function App() {
                 </a>
                 <a
                   className="signal-resume-link"
-                  href="/resume/Bhuvan-Sarakam-Databricks-Cloud.pdf"
+                  href={`${import.meta.env.BASE_URL}resume/Bhuvan-Sarakam-Databricks-Cloud.pdf`}
                   target="_blank"
                   rel="noreferrer"
                 >

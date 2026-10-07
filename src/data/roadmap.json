@@ -1,0 +1,276 @@
+[
+  {
+    "id": "data-incident-commander",
+    "number": "01",
+    "title": "Data Incident Commander",
+    "track": "Flagship \u00b7 FDE + AI engineering",
+    "problem": "Data teams lose time correlating failed jobs, schema changes, lineage, and business impact.",
+    "solution": "Ingest dbt artifacts and pipeline logs; detect deterministic failures; retrieve relevant runbooks; propose a cited incident timeline and recovery plan. Require approval before any rerun.",
+    "why": "Use SQL and rules for detection because counts and contracts are verifiable. Use an LLM for explaining heterogeneous logs and linking evidence. Retrieval keeps recommendations tied to actual runbooks.",
+    "data": "Generate 30 pipeline incidents with known causes in a small orders lakehouse: schema drift, duplicate loads, missing partitions, late arrivals, stale dashboards. Keep incident families separated between development and holdout.",
+    "stack": "Python, FastAPI, dbt, DuckDB locally; PostgreSQL for deployment; React; Docker. Add an orchestrator only when scheduling needs it.",
+    "architecture": "Dashboard \u2192 incident API \u2192 rule checks + lineage graph \u2192 runbook retrieval \u2192 structured diagnosis \u2192 approval queue \u2192 audited sandbox rerun.",
+    "evaluation": "Compare to rule-only alerts on 30 held-out incidents: top-1 cause accuracy, unsupported-claim rate, reviewer time, recovery success, p95 latency and cost per incident. Aim for \u226580% cause accuracy and zero unapproved writes; these are launch targets.",
+    "demo": "Break a pipeline live, explain downstream impact, approve a replay, and show idempotency on duplicate replay.",
+    "deployment": "Deploy a Docker API and worker on a container host with managed PostgreSQL; frontend on Pages. Run seeded scenarios on a schedule and expose only synthetic logs.",
+    "resume": "Built a data-incident assistant integrating [N] pipelines; achieved [X]% cause accuracy on [N] held-out incidents and reduced median diagnosis time from [A] to [B] in a timed pilot.",
+    "sources": [
+      {
+        "title": "Sentry debugging case study",
+        "url": "https://www.anthropic.com/customers/sentry"
+      },
+      {
+        "title": "OpenAI FDE responsibilities",
+        "url": "https://openai.com/careers/forward-deployed-engineer-singapore-singapore/"
+      }
+    ],
+    "hours": 55,
+    "status": "Planned",
+    "spec": "https://github.com/Bchamp21/bhuvan-portfolio/blob/master/docs/projects/data-incident-commander.md"
+  },
+  {
+    "id": "document-operations",
+    "number": "02",
+    "title": "Document Operations Workbench",
+    "track": "Flagship \u00b7 FDE",
+    "problem": "Operations staff retype invoice and purchase-order data and manually reconcile mismatches.",
+    "solution": "Upload invoices and purchase orders; extract structured fields with source spans; reconcile totals and line items; route discrepancies to a human review queue; export approved records.",
+    "why": "OCR and language models handle varied layouts. Decimal arithmetic, schemas, and matching rules own financial calculations. Confidence thresholds route uncertain fields instead of silently posting them.",
+    "data": "Create 100 clearly synthetic invoices and matching POs across layouts, currencies and tax formats. Include scanned images, duplicate invoices, missing fields, and intentionally inconsistent totals. Split by layout and vendor.",
+    "stack": "Python, OCR, Pydantic, FastAPI, PostgreSQL, private object storage, React.",
+    "architecture": "Upload \u2192 private storage \u2192 queued OCR \u2192 schema extraction \u2192 deterministic validation \u2192 field-level review \u2192 approved export + audit events.",
+    "evaluation": "Compare OCR+regex against extraction: field exact match, line-item F1, exception recall, human correction time and cost/document. Target \u226595% exact match on key fields and 100% detection of seeded total mismatches; report results separately by layout.",
+    "demo": "Process a clean invoice, an unseen layout, a duplicate and a mismatched invoice; correct a field with the source page visible.",
+    "deployment": "Deploy API plus queue worker and private storage; add upload size limits, deletion, expiring links and an integration sandbox. Pages hosts the public case study only.",
+    "resume": "Built an invoice reconciliation workflow processing [N] synthetic documents with [X]% field accuracy and [Y]% exception recall; measured [Z]% faster review in a [N]-user pilot.",
+    "sources": [
+      {
+        "title": "NRI document review case study",
+        "url": "https://claude.com/customers/nri"
+      }
+    ],
+    "hours": 60,
+    "status": "Planned",
+    "spec": "https://github.com/Bchamp21/bhuvan-portfolio/blob/master/docs/projects/document-operations.md"
+  },
+  {
+    "id": "governed-analytics",
+    "number": "03",
+    "title": "Governed Analytics Copilot",
+    "track": "Flagship \u00b7 AI engineering",
+    "problem": "Business users wait for analysts, while unrestricted text-to-SQL can return incorrect metrics or expose data.",
+    "solution": "Translate business questions into queries over an approved semantic layer; show SQL, metric definitions, freshness and result provenance; ask clarification on ambiguous questions.",
+    "why": "The model maps language to intent. A semantic layer defines revenue and other metrics consistently. A read-only database identity, allowed views, timeouts and row limits enforce access outside the model.",
+    "data": "Seed a SaaS dataset with customers, subscriptions and events. Write 100 questions with expected result sets, including ambiguous metrics, timezone boundaries and forbidden access. Use Spider 2.0 as additional research, not an unreported training/test mix.",
+    "stack": "FastAPI, PostgreSQL, SQL parser, metric registry, React charts.",
+    "architecture": "Question \u2192 allowed schema + definitions \u2192 structured query proposal \u2192 AST checks \u2192 read-only execution \u2192 cited result explanation.",
+    "evaluation": "Measure result-set correctness rather than SQL string match; refusal accuracy, clarification rate, tenant isolation, latency and cost. Target \u226585% execution accuracy on the held-out set and zero forbidden queries in the attack suite.",
+    "demo": "Ask a growth question, inspect its SQL and definition, then attempt cross-tenant access and a malicious query.",
+    "deployment": "Deploy API with separate read-only DB role, per-user access mapping, statement timeout and query audit trail; serve the UI separately.",
+    "resume": "Built a governed analytics copilot with [X]% result correctness on [N] held-out questions; enforced read-only execution and blocked [N/N] prohibited test queries.",
+    "sources": [
+      {
+        "title": "Spider 2.0 enterprise SQL benchmark",
+        "url": "https://spider2-sql.github.io/"
+      },
+      {
+        "title": "OpenAI FDE responsibilities",
+        "url": "https://openai.com/careers/forward-deployed-engineer-singapore-singapore/"
+      }
+    ],
+    "hours": 60,
+    "status": "Planned",
+    "spec": "https://github.com/Bchamp21/bhuvan-portfolio/blob/master/docs/projects/governed-analytics.md"
+  },
+  {
+    "id": "support-resolution",
+    "number": "04",
+    "title": "Support Resolution Workbench",
+    "track": "Workflow \u00b7 FDE",
+    "problem": "Support agents repeatedly search policies and order history; a plausible answer alone does not resolve a case.",
+    "solution": "Classify tickets, fetch scoped order data, retrieve versioned policy, draft a cited response, and propose an approved action in a mock commerce system.",
+    "why": "Rules handle policy limits and action permissions. The LLM handles intent and response composition. A persisted state machine makes escalation, approval and retries inspectable.",
+    "data": "Author 80 synthetic tickets, two policy versions and a mock order API. Include conflicting policy, angry users, missing evidence and refund requests outside limits.",
+    "stack": "FastAPI, PostgreSQL, retrieval, React review queue and a mock order service.",
+    "architecture": "Ticket \u2192 intent \u2192 scoped tools \u2192 policy retrieval \u2192 draft/action \u2192 reviewer decision \u2192 idempotent action \u2192 audit.",
+    "evaluation": "Measure correct case resolution, policy adherence, escalation recall and review time against human lookup. Target \u226590% policy adherence and zero unapproved refunds in seeded tests.",
+    "demo": "Resolve a routine case, escalate a policy exception, then retry an approved action without issuing it twice.",
+    "deployment": "Deploy API and mock commerce service with sandbox credentials; cap tool calls and spend; make the public demo resettable.",
+    "resume": "Built a support workflow spanning [N] tools; achieved [X]% policy adherence on [N] cases and reduced measured handling time by [Y]%.",
+    "sources": [
+      {
+        "title": "Assembled customer deployments",
+        "url": "https://www.assembled.com/customers"
+      },
+      {
+        "title": "Anthropic: Building effective agents",
+        "url": "https://www.anthropic.com/engineering/building-effective-agents"
+      }
+    ],
+    "hours": 40,
+    "status": "Planned",
+    "spec": "https://github.com/Bchamp21/bhuvan-portfolio/blob/master/docs/projects/support-resolution.md"
+  },
+  {
+    "id": "secure-knowledge",
+    "number": "05",
+    "title": "Permission-Aware Knowledge Search",
+    "track": "Retrieval \u00b7 AI engineering",
+    "problem": "Employees need answers from scattered documentation, but useful retrieval must respect document permissions and changes.",
+    "solution": "Index a synthetic company wiki with document ACLs and versions; support hybrid retrieval, cited answers, deletion and abstention when evidence is absent.",
+    "why": "Lexical search captures exact identifiers; embeddings capture paraphrases. Server-side permission filtering must occur before model context construction. A reranker is added only if retrieval evaluation justifies its cost.",
+    "data": "Create 150 synthetic wiki pages across three departments and 100 answerable/unanswerable questions. Include revoked access, stale policies and malicious instructions inside documents.",
+    "stack": "FastAPI, PostgreSQL full-text search + vector extension, React and an ingestion worker.",
+    "architecture": "Authenticated question \u2192 ACL-filtered hybrid retrieval \u2192 optional rerank \u2192 evidence threshold \u2192 cited answer or abstention.",
+    "evaluation": "Compare keyword, vector and hybrid retrieval using Recall@5 and grounded-answer accuracy; measure abstention precision and ACL leakage. Target zero unauthorized snippets across the access test matrix.",
+    "demo": "Ask the same question as two roles, revoke a document, reindex a policy and show a missing-evidence refusal.",
+    "deployment": "Deploy API and managed PostgreSQL; private ingestion endpoint, deletion propagation, role fixtures and traces with redacted text.",
+    "resume": "Built permission-aware hybrid search across [N] documents; achieved Recall@5 of [X] and passed [N] access-isolation tests.",
+    "sources": [
+      {
+        "title": "NIST Generative AI Profile",
+        "url": "https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.600-1.pdf"
+      },
+      {
+        "title": "Anthropic: Building effective agents",
+        "url": "https://www.anthropic.com/engineering/building-effective-agents"
+      }
+    ],
+    "hours": 40,
+    "status": "Planned",
+    "spec": "https://github.com/Bchamp21/bhuvan-portfolio/blob/master/docs/projects/secure-knowledge.md"
+  },
+  {
+    "id": "llm-release-gate",
+    "number": "06",
+    "title": "LLM Evaluation and Release Gate",
+    "track": "Platform \u00b7 AI engineering",
+    "problem": "Prompt and model updates can silently regress task quality, latency or operating cost.",
+    "solution": "Build a reusable runner that compares prompt/model versions, stores traces, reports quality/cost tradeoffs, and gates changes in GitHub Actions. Use the first three projects as real evaluation clients.",
+    "why": "Deterministic graders evaluate factual fields and tool effects. Human-reviewed rubrics handle nuanced answers. A model judge is calibrated against humans and never treated as sole ground truth.",
+    "data": "Reuse frozen held-out fixtures from projects 1\u20133. Store dataset versions, model settings, expected outputs and rubric disagreements. Keep development examples separate.",
+    "stack": "Python CLI, pytest, SQLite or PostgreSQL result store, static report and GitHub Actions.",
+    "architecture": "Versioned dataset \u2192 baseline/candidate runs \u2192 rule + calibrated rubric graders \u2192 repeated trials \u2192 comparison report \u2192 CI decision.",
+    "evaluation": "Measure seeded regression detection, grader-human agreement, run reproducibility, dollar cost and false gate failures. Report confidence intervals and failure slices instead of one aggregate score.",
+    "demo": "Introduce a prompt regression, fail the gate, inspect the failing trace, fix the prompt and rerun the same dataset.",
+    "deployment": "Run synthetic smoke evals in CI and bounded paid evals manually; publish scrubbed static reports to Pages. Credentials stay in Actions secrets.",
+    "resume": "Built an AI release gate covering [N] scenarios across [N] applications; detected [N/N] seeded regressions and reported quality, latency and cost per release.",
+    "sources": [
+      {
+        "title": "Anthropic: Demystifying evals for AI agents",
+        "url": "https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents"
+      }
+    ],
+    "hours": 35,
+    "status": "Planned",
+    "spec": "https://github.com/Bchamp21/bhuvan-portfolio/blob/master/docs/projects/llm-release-gate.md"
+  },
+  {
+    "id": "agent-security-lab",
+    "number": "07",
+    "title": "Agent Security and Tool Gateway",
+    "track": "Security \u00b7 AI engineering",
+    "problem": "Agents can confuse retrieved instructions with authority or call tools beyond the intended permissions.",
+    "solution": "Build a local attack lab plus a tool gateway that checks identity, resource scope, JSON schemas and action approvals; test indirect prompt injection and cross-tenant access.",
+    "why": "Prompt text is an imperfect defense. Authorization, network allowlists, scoped tokens and tool-side checks constrain consequences even when the model follows hostile text.",
+    "data": "Write synthetic documents and attacks against your own knowledge/support apps; use canary secrets and mock outbound endpoints. PyRIT is an optional harness; do not scan third-party systems.",
+    "stack": "Python, FastAPI gateway, policy checks, pytest; optional Microsoft PyRIT.",
+    "architecture": "Untrusted content \u2192 model proposal \u2192 identity-bound gateway \u2192 permission/schema checks \u2192 approved tool execution \u2192 audit events.",
+    "evaluation": "Measure attack success rate before/after, benign task completion, false denials and added latency. A zero observed attack rate is limited to the disclosed suite, not proof of immunity.",
+    "demo": "Show an injection succeeding in an intentionally vulnerable sandbox, then blocked by an independent tool permission check.",
+    "deployment": "Deploy a restricted sandbox with mock integrations, no production secrets and an explicit reset path. Publish the attack corpus and defensive test report.",
+    "resume": "Built a tool authorization gateway; reduced attack success from [A]% to [B]% on [N] disclosed scenarios while retaining [X]% benign task completion.",
+    "sources": [
+      {
+        "title": "Microsoft PyRIT",
+        "url": "https://microsoft.github.io/PyRIT/0.12.1/getting-started/readme/"
+      },
+      {
+        "title": "NIST Generative AI Profile",
+        "url": "https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.600-1.pdf"
+      }
+    ],
+    "hours": 40,
+    "status": "Planned",
+    "spec": "https://github.com/Bchamp21/bhuvan-portfolio/blob/master/docs/projects/agent-security-lab.md"
+  },
+  {
+    "id": "compliance-evidence",
+    "number": "08",
+    "title": "Compliance Evidence Mapper",
+    "track": "Enterprise workflow \u00b7 FDE",
+    "problem": "Security teams repeatedly map technical evidence to customer questionnaires and struggle to keep answers current.",
+    "solution": "Map versioned policies and infrastructure evidence to an authored control catalog; draft cited questionnaire answers; flag missing, stale or contradictory evidence for reviewer signoff.",
+    "why": "Retrieval supplies evidence; deterministic freshness and coverage rules prevent vague summaries from masquerading as controls. The model assists drafting, while a human owns approval.",
+    "data": "Author a small control catalog and 50 synthetic questionnaire items, policies and mock cloud configuration exports. Avoid redistributing proprietary control text.",
+    "stack": "FastAPI, PostgreSQL, retrieval, versioned object storage and review UI.",
+    "architecture": "Evidence ingestion \u2192 control matching \u2192 freshness/contradiction checks \u2192 cited draft \u2192 reviewer approval \u2192 export.",
+    "evaluation": "Measure evidence precision, unsupported assertion rate, missing-evidence recall and review time. Target zero unsupported approved claims in the held-out set; this does not certify compliance.",
+    "demo": "Expire an access-review artifact, show the affected controls, update evidence and compare the versioned answer.",
+    "deployment": "Deploy read-only mock cloud connectors, private evidence storage, retention controls and a public synthetic demo.",
+    "resume": "Built an evidence-backed questionnaire workflow covering [N] controls, with [X]% citation precision and [Y]% missing-evidence recall on synthetic reviews.",
+    "sources": [
+      {
+        "title": "Vanta compliance remediation case study",
+        "url": "https://www.anthropic.com/customers/vanta"
+      }
+    ],
+    "hours": 40,
+    "status": "Planned",
+    "spec": "https://github.com/Bchamp21/bhuvan-portfolio/blob/master/docs/projects/compliance-evidence.md"
+  },
+  {
+    "id": "field-service-intake",
+    "number": "09",
+    "title": "Field Service Intake and Routing",
+    "track": "Public service \u00b7 FDE",
+    "problem": "Service requests arrive as incomplete descriptions; operators must classify, deduplicate and route them to the right team.",
+    "solution": "Create a multilingual intake form that extracts location and issue type, asks for missing information, finds potential duplicates and proposes a routing queue.",
+    "why": "Language models normalize messy descriptions. Rules enforce service boundaries and required fields. Similarity identifies candidates for human duplicate review rather than deleting requests automatically.",
+    "data": "Use an anonymized, bounded NYC311 open-data slice for structured categories and routing analysis. Author synthetic multilingual narratives because public records may not contain the free-text detail needed. Preserve temporal splits.",
+    "stack": "FastAPI, PostgreSQL geospatial support if needed, multilingual model and React map/list interface.",
+    "architecture": "Intake \u2192 field extraction \u2192 validation/clarification \u2192 duplicate candidates \u2192 routing suggestion \u2192 dispatcher approval.",
+    "evaluation": "Compare rules and classifier/model routing with macro-F1, per-language results, missing-field recall and duplicate precision. Target \u226590% routing macro-F1 on your chosen subset; report language limitations.",
+    "demo": "Submit incomplete intake, clarify location, identify a duplicate and explain the proposed department.",
+    "deployment": "Deploy a synthetic public intake sandbox with rate limits; never submit real city requests. Keep raw public location records out of the portfolio demo.",
+    "resume": "Built multilingual service-request intake; achieved [X] routing macro-F1 on [N] held-out cases and [Y]% precision for duplicate suggestions.",
+    "sources": [
+      {
+        "title": "NYC311 service request reporting",
+        "url": "https://www.nyc.gov/site/311reporting/311-reports/service-requests.page"
+      }
+    ],
+    "hours": 40,
+    "status": "Planned",
+    "spec": "https://github.com/Bchamp21/bhuvan-portfolio/blob/master/docs/projects/field-service-intake.md"
+  },
+  {
+    "id": "customer-onboarding",
+    "number": "10",
+    "title": "Customer Integration and Onboarding Lab",
+    "track": "Delivery capstone \u00b7 FDE",
+    "problem": "Enterprise AI pilots stall when customer data schemas, identity systems and operational requirements differ.",
+    "solution": "Build a configurable onboarding workbench that maps CSV/JSON fields to a canonical schema, validates imports, provisions an isolated demo tenant and generates a handoff checklist and integration report.",
+    "why": "LLMs suggest mappings for unfamiliar column names. Deterministic contracts and dry-run validation decide acceptance. This project demonstrates repeatable delivery across customers rather than a single hardcoded demo.",
+    "data": "Create three synthetic customers with different schemas, field names, malformed rows, webhook signatures and retry behavior. Add a fourth unseen customer as the acceptance test.",
+    "stack": "FastAPI, PostgreSQL tenant isolation, React, schema registry, signed webhooks, Docker and CI.",
+    "architecture": "Discovery worksheet \u2192 mapping proposal \u2192 human confirmation \u2192 validation preview \u2192 idempotent import \u2192 isolated tenant \u2192 acceptance report + handoff.",
+    "evaluation": "Measure time to onboard unseen schemas, mapping accuracy, row rejection precision, webhook replay handling and tenant-isolation tests. Compare with manual mapping on identical datasets.",
+    "demo": "Onboard an unseen customer, fix a rejected row, replay a webhook and show that a second tenant cannot access the first.",
+    "deployment": "Deploy an API and mock customer services, separate credentials per tenant, migrations and backup/restore instructions; publish a customer runbook.",
+    "resume": "Built a configurable onboarding platform supporting [N] schemas; reduced measured integration setup from [A] to [B] and passed [N] tenant-isolation and replay tests.",
+    "sources": [
+      {
+        "title": "OpenAI FDE responsibilities",
+        "url": "https://openai.com/careers/forward-deployed-engineer-singapore-singapore/"
+      },
+      {
+        "title": "Anthropic: Building effective agents",
+        "url": "https://www.anthropic.com/engineering/building-effective-agents"
+      }
+    ],
+    "hours": 50,
+    "status": "Planned",
+    "spec": "https://github.com/Bchamp21/bhuvan-portfolio/blob/master/docs/projects/customer-onboarding.md"
+  }
+]

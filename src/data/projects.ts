@@ -19,7 +19,7 @@ export const projects: Project[] = [
     metric: 'Live demo · FastAPI + skill scoring',
     href: 'https://job-match-ai-rawb.onrender.com',
     role: 'Solo build · live on Render',
-    image: '/project-shots/job-match-ai.png',
+    image: `${import.meta.env.BASE_URL}project-shots/job-match-ai.png`,
     blurb: 'Resume ↔ job skill scorer with FastAPI and optional ChatGPT blending.',
   },
   {

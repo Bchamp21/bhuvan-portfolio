@@ -1,32 +1,17 @@
-# React + TypeScript + Vite
+# Bhuvan Chandra — AI and data engineering portfolio
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+React + TypeScript profile page with existing experience and selected work, plus ten clearly labeled planned AI/FDE builds. New plans are not represented as shipped projects.
 
-Currently, two official plugins are available:
+- [Research and project ranking](docs/RESEARCH-AND-ROADMAP.md)
+- [Low-cost Python, AI and multi-cloud learning plan](docs/LOW-COST-LEARNING-PLAN.md)
+- Individual specifications in `docs/projects/` include data, architecture, evaluation, deployment, teaching steps and draft resume/LinkedIn copy.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Development
 
-## React Compiler
+Node 24+ recommended. Run `npm ci`, then `npm run dev`. Verify with `npm run lint` and `npm run build`.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Deployment
 
-## Expanding the Oxlint configuration
+GitHub Actions builds with `GITHUB_PAGES=true` and publishes `dist` to GitHub Pages on pushes to master. Public URL: https://bchamp21.github.io/bhuvan-portfolio/. The Vite base is /bhuvan-portfolio/ for Pages; ordinary builds retain / for custom-domain hosts. No backend or model credentials belong in this static site.
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
-```
-
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+The cloud/API plans are specifications only; no paid cloud resources are provisioned. External demo and historical experience claims inherited from the original portfolio have not been independently validated in this update.
